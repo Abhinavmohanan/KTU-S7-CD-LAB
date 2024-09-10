@@ -1,0 +1,13 @@
+{
+int t1,t2;
+t1=2;
+t2=-(t2+t1*6)/(t2-t1);
+if t2>5 then
+print(t2);
+else {
+int t3;
+t3=99;
+t2=-25;
+print(-t1+t2*t3);
+} endif
+}
