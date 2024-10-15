@@ -1,0 +1,6 @@
+Create a YACC program to check the syntax of for statement in c
+
+input :
+
+
+for ( i = 1 ; i < n ; i ++ ) 
