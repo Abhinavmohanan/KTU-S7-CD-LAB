@@ -1,37 +1,57 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-void yyerror(char *s);
+
+// Declare the yyerror function to avoid implicit declaration warnings
+void yyerror(const char *s);
+
+// Declare the yylex function to avoid implicit declaration warnings
 int yylex(void);
+
+// Global variable to indicate validity of the arithmetic expression
+int flag = 0;
 %}
 
 %token NUMBER
 
-%%
-start:  expression             { printf(" Result is : %d\n", $1); }
-        ;
-expression:
-      expression '+' term         { $$ = $1 + $3; }
-    | expression '-' term         { $$ = $1 - $3; }
-    | term                        { $$ = $1; }
-    ;
-term:
-      term '*' factor             { $$ = $1 * $3; }
-    | term '/' factor             { $$ = $1 / $3; }
-    | factor                      { $$ = $1; }
-    ;
-factor:
-      '(' expression ')'          { $$ = $2; }     
-    | NUMBER                      { $$ = $1; }
-    ;
+%left '+' '-'
+%left '*' '/' '%'
+%left '(' ')'
+
 %%
 
+// Define grammar rules for arithmetic expressions
+ArithmeticExpression:
+    E {
+        printf("\nResult=%d\n", $$);
+        return 0;  // End parsing after expression is evaluated
+    }
+;
+
+E:
+    E '+' E { $$ = $1 + $3; }
+  | E '-' E { $$ = $1 - $3; }
+  | E '*' E { $$ = $1 * $3; }
+  | E '/' E { $$ = $1 / $3; }
+  | E '%' E { $$ = $1 % $3; }
+  | '(' E ')' { $$ = $2; }
+  | NUMBER { $$ = $1; }
+;
+
+%%
+
+// Main function
 int main() {
-    printf("Enter an arithmetic expression: ");
-    yyparse();   
+    printf("\nEnter Any Arithmetic Expression (Addition, Subtraction, Multiplication, Division, Modulus):\n");
+    yyparse();  // Start parsing the input
+    if (flag == 0) {
+        printf("\nEntered arithmetic expression is Valid\n\n");
+    }
     return 0;
 }
 
-void yyerror(char *s) {
-    fprintf(stderr, "Error: %s\n", s);
+// Error handling function
+void yyerror(const char *s) {
+    printf("\nEntered arithmetic expression is Invalid: %s\n\n", s);
+    flag = 1;  // Mark as invalid if an error occurs
 }
